@@ -2,6 +2,9 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 
+
+const path = require('path');
+
 const { testConnection } = require('./event_db');
 const eventRoutes = require('./routes/events');
 
@@ -23,6 +26,7 @@ app.use((req, res, next) => {
 });
 
 app.use('/api', eventRoutes);
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.get('/', (req, res) => {
   res.json({
