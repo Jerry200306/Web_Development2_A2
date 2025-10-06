@@ -2,19 +2,18 @@ const API_BASE_URL = 'http://localhost:3000/api';
 const IMAGE_BASE_URL = 'http://localhost:3000';
 
 function getImageUrl(imagePath) {
-    if (!imagePath) return null;
+    if (!imagePath) {
+        return `${IMAGE_BASE_URL}/images/events/1.jpg`;
+    }
     
-
     if (imagePath.startsWith('http')) {
         return imagePath;
     }
     
-
     if (imagePath.startsWith('/')) {
         return `${IMAGE_BASE_URL}${imagePath}`;
     }
     
-
     return `${IMAGE_BASE_URL}/${imagePath}`;
 }
 
