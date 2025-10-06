@@ -17,13 +17,20 @@ class EventModel {
     `;
     
     try {
-      const [rows] = await db.execute(query);
-      return rows;
-    } catch (error) {
-      throw new Error(`Error fetching upcoming events: ${error.message}`);
-    }
+    const [rows] = await db.execute(query);
+    
+    const eventsWithImages = rows.map((event, index) => {
+      const imageNumber = (index % 7) + 1;
+      return {
+        ...event,
+        image_url: `/images/events/${imageNumber}.jpg`
+      };
+    });
+    return eventsWithImages;
+  } catch (error) {
+    throw new Error(`Error fetching upcoming events: ${error.message}`);
   }
-
+}
   async searchEvents(filters = {}) {
     let query = `
       SELECT 
@@ -38,7 +45,6 @@ class EventModel {
     
     const params = [];
     const conditions = [];
-
 
     if (filters.date) {
       conditions.push('e.date = ?');
@@ -66,7 +72,15 @@ class EventModel {
 
     try {
       const [rows] = await db.execute(query, params);
-      return rows;
+      const eventsWithImages = rows.map((event, index) => {
+      const imageNumber = (index % 7) + 1;
+      return {
+        ...event,
+        image_url: `/images/events/${imageNumber}.jpg`
+      };
+    });
+    
+    return eventsWithImages;
     } catch (error) {
       throw new Error(`Error searching events: ${error.message}`);
     }
@@ -90,11 +104,19 @@ class EventModel {
     
     try {
       const [rows] = await db.execute(query, [eventId]);
-      return rows.length > 0 ? rows[0] : null;
-    } catch (error) {
-      throw new Error(`Error fetching event ${eventId}: ${error.message}`);
+      if (rows.length > 0) {
+      const event = rows[0];
+      const imageNumber = (event.id % 7) || 1; 
+      return {
+        ...event,
+        image_url: `/images/events/${imageNumber}.jpg`
+      };
     }
+    return null;
+  } catch (error) {
+    throw new Error(`Error fetching event ${eventId}: ${error.message}`);
   }
+}
 
 
   async getAllCategories() {
